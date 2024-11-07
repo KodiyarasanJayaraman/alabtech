@@ -1,7 +1,7 @@
 import 'package:alabtech/Widgets/text_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'AuthScreen/auth_service.dart';
 import 'AuthScreen/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(color: Colors.green),
+              decoration: BoxDecoration(color: Colors.orange.shade500),
               accountName: const Text('kodiyarasan'),
               accountEmail: Text("${FirebaseAuth.instance.currentUser!.email}"),
               currentAccountPicture: CircleAvatar(
@@ -42,107 +42,131 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               arrowColor: Colors.deepOrange,
               otherAccountsPictures: [
-                IconButton(onPressed: () {}, icon: Icon(Icons.edit))
+                IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
               ],
             ), //DrawerHeader
             Column(
               children: List.generate(accountTile.length, (index) {
-                return ListTile(
-                    title: Text(accountTile[index]['label']),
-                    leading: accountTile[index]['icon'],
-                    onTap: (accountTile[index]['label'] == 'Logout')
-                        ? () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return StatefulBuilder(
-                                    builder: (context, setState) {
-                                      return Dialog(
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 10),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const TextWidget(
-                                                text: 'Logout',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              const TextWidget(
-                                                text:
-                                                    'Are you sure, do you want logout?',
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
+                return Column(
+                  children: [
+                    ListTile(
+                        title: Text(accountTile[index]['label']),
+                        leading: accountTile[index]['icon'],
+                        onTap: (accountTile[index]['label'] == 'Logout')
+                            ? () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                          return Dialog(
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 10),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      style: TextButton.styleFrom(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      10)),
-                                                      child: const TextWidget(
-                                                        text: 'No',
-                                                        color: Colors.blue,
-                                                      )),
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        FirebaseAuth.instance
-                                                            .signOut();
-                                                        Navigator
-                                                            .pushAndRemoveUntil(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          const LoginScreen(),
-                                                                ),
-                                                                (route) =>
-                                                                    false);
-                                                      },
-                                                      style: TextButton.styleFrom(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      10)),
-                                                      child: const TextWidget(
-                                                        text: 'Yes',
-                                                        color: Colors.blue,
-                                                      )),
+                                                  const TextWidget(
+                                                    text: 'Logout',
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  const TextWidget(
+                                                    text:
+                                                        'Are you sure, do you want logout?',
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          style: TextButton.styleFrom(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          10)),
+                                                          child:
+                                                              const TextWidget(
+                                                            text: 'No',
+                                                            color: Colors.blue,
+                                                          )),
+                                                      TextButton(
+                                                          onPressed: () async {
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .signOut();
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .signOut();
+                                                            await AuthService()
+                                                                .googleSignOut();
+                                                            Navigator
+                                                                .pushAndRemoveUntil(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        const LoginScreen(),
+                                                              ),
+                                                              (route) => false,
+                                                            );
+                                                            // SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                            // prefs.remove('login');
+                                                            // Navigator.pushReplacement(context,
+                                                            //     MaterialPageRoute(builder: (context) => const LoginPage()));
+                                                          },
+                                                          style: TextButton.styleFrom(
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5)),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          10)),
+                                                          child:
+                                                              const TextWidget(
+                                                            text: 'Yes',
+                                                            color: Colors.blue,
+                                                          )),
+                                                    ],
+                                                  )
                                                 ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       );
-                                    },
-                                  );
-                                });
-                          }
-                        : () {
-                            Navigator.pop(context);
-                          });
+                                    });
+                              }
+                            : () {
+                                Navigator.pop(context);
+                              }),
+                    if (accountTile.length != index + 1)
+                      const Divider(
+                        indent: 20,
+                        endIndent: 60,
+                      )
+                  ],
+                );
               }),
             )
           ],
@@ -153,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.orangeAccent,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -179,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
               fontWeight: FontWeight.bold,
             ),
             const SizedBox(height: 8),
-            ProductCard(),
+            const ProductCard(),
             const SizedBox(height: 24),
             const TextWidget(
               text: "Tips Section",
@@ -187,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
               fontWeight: FontWeight.bold,
             ),
             const SizedBox(height: 8),
-            TipsCard(),
+            const TipsCard(),
             const SizedBox(
               height: 15,
             ),
@@ -231,7 +255,7 @@ class _ProductCardState extends State<ProductCard> {
                     )),
                 child: Stack(
                   children: [
-                    Align(
+                    const Align(
                       alignment: Alignment.bottomLeft,
                       child: TextWidget(
                         padding: EdgeInsets.only(left: 3, bottom: 3),
@@ -259,7 +283,7 @@ class _ProductCardState extends State<ProductCard> {
                         gradient: LinearGradient(
                             begin: Alignment.topRight,
                             end: Alignment.bottomLeft,
-                            transform: GradientRotation(6),
+                            transform: const GradientRotation(6),
                             tileMode: TileMode.clamp,
                             colors: [
                               Colors.black,
@@ -475,7 +499,7 @@ class _TipsCardState extends State<TipsCard> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.blueGrey.shade100,
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Column(
         children: [
           Row(
@@ -598,7 +622,7 @@ class _TipsCardState extends State<TipsCard> {
                     );
                   }),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Checkbox(

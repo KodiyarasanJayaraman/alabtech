@@ -8,6 +8,7 @@ import '../Widgets/text_widget.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<void> emailAuth(
       {required String email,
@@ -58,6 +59,16 @@ class AuthService {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
+    }
+  }
+
+  Future<void> googleSignOut() async {
+    try {
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+      Fluttertoast.showToast(msg: "User signed out successfully");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Error signing out: $e");
     }
   }
 

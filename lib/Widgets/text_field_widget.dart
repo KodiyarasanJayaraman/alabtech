@@ -75,99 +75,107 @@ class TextFieldWidget extends StatelessWidget {
             horizontal: 10,
           ),
       child: TextFormField(
-        inputFormatters: [
-          if (inputType == TextInputType.number)
-            FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
-        ],
-        textAlign: textAlign ?? TextAlign.center,
-        obscureText: obscureText ?? false,
-        maxLines: maxlines ?? 1,
-        focusNode: focusNode,
-        onChanged: onFieldSubmit,
-        keyboardType: inputType,
-        autofocus: false,
-        style: const TextStyle(
-          fontWeight: FontWeight.w400,
-          fontSize: 14,
-        ),
-        decoration: InputDecoration(
-            isCollapsed: isCollapsed ?? false,
-            isDense: isDense ?? false,
-            contentPadding: contentPadding ??
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            prefixIconConstraints:
-                const BoxConstraints(maxWidth: 55, minWidth: 35),
-            suffixIconConstraints:
-                const BoxConstraints(maxWidth: 50, minWidth: 45),
-            // constraints: const BoxConstraints(maxHeight: 35),
-            suffixIcon: suffixIcon,
-            border: border ??
-                OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide()),
-            focusColor: Colors.white,
-            enabledBorder: enabledBorder ??
-                const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  borderSide: BorderSide(width: 1),
-                ),
-            focusedBorder: focusedBorder ??
-                const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  borderSide: BorderSide(width: 1),
-                ),
-            // focusedErrorBorder: focusedBorder ??
-            //     OutlineInputBorder(
-            //       borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-            //       borderSide: BorderSide(color: AppColor.blue900),
-            //     ),
-            // errorBorder: errorBorder ??
-            //     OutlineInputBorder(
-            //       borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-            //       borderSide: BorderSide(color: AppColor.red),
-            //     ),
-            hintText: hintText,
-            filled: filled ?? true,
-            fillColor: fillColor ?? Colors.white.withOpacity(.7),
-            hintStyle: hintStyle ??
-                const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-            prefixIcon: prefixIcon),
-        onEditingComplete: onEditComplete,
-        controller: controller,
-        maxLength: maxLength,
-        readOnly: readOnly ??
-                (inputType == TextInputType.streetAddress ||
-                    hintText == "Pincode")
-            ? true
-            : false,
-        validator: validator ??
-            (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please Enter $customErrorText';
-              } else {
-                if (inputType == TextInputType.emailAddress) {
-                  bool emailValid = RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                      .hasMatch(value);
-                  if (emailValid == false) {
-                    return 'Please Enter Valid Email';
-                  } else {
-                    return null;
-                  }
-                } else if (inputType == TextInputType.text) {
-                  if (value.isEmpty) {
-                    return 'Please Enter Valid $customErrorText';
-                  } else {
-                    return null;
+          inputFormatters: [
+            if (inputType == TextInputType.number)
+              FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
+          ],
+          textAlign: textAlign ?? TextAlign.center,
+          obscureText: obscureText ?? false,
+          maxLines: maxlines ?? 1,
+          focusNode: focusNode,
+          onChanged: onFieldSubmit,
+          keyboardType: inputType,
+          autofocus: false,
+          style: const TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          ),
+          decoration: InputDecoration(
+              isCollapsed: isCollapsed ?? false,
+              isDense: isDense ?? false,
+              contentPadding: contentPadding ??
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              prefixIconConstraints:
+                  const BoxConstraints(maxWidth: 55, minWidth: 35),
+              suffixIconConstraints:
+                  const BoxConstraints(maxWidth: 50, minWidth: 45),
+              suffixIcon: suffixIcon,
+              border: border ??
+                  OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide()),
+              focusColor: Colors.white,
+              enabledBorder: enabledBorder ??
+                  const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(width: 1),
+                  ),
+              focusedBorder: focusedBorder ??
+                  const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(width: 1),
+                  ),
+              focusedErrorBorder: focusedBorder ??
+                  OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+                    borderSide: BorderSide(color: Colors.blue.shade900),
+                  ),
+              errorBorder: errorBorder ??
+                  const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+              hintText: hintText,
+              filled: filled ?? true,
+              fillColor: fillColor ?? Colors.white.withOpacity(.7),
+              hintStyle: hintStyle ??
+                  const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+              prefixIcon: prefixIcon),
+          onEditingComplete: onEditComplete,
+          controller: controller,
+          maxLength: maxLength,
+          validator: validator ??
+              (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please Enter $customErrorText';
+                } else {
+                  if (inputType == TextInputType.phone) {
+                    if (value.length < 10 && value.length > 10) {
+                      return 'Please enter valid phone number';
+                    } else if (inputType == TextInputType.name) {
+                      final nameValid =
+                          RegExp(r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");
+                      if (!nameValid.hasMatch(value)) {
+                        return 'Please enter a valid name';
+                      }
+                      return null;
+                    }
+                  } else if (inputType == TextInputType.emailAddress) {
+                    bool emailValid = RegExp(
+                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(value);
+                    if (emailValid == false) {
+                      return 'Please Enter Valid Email';
+                    } else {
+                      return null;
+                    }
+                  } else if (hintText == 'Password') {
+                    if (value.length < 8) {
+                      return 'Password Must be 8 Character';
+                    }
+                  } else if (inputType == TextInputType.text) {
+                    if (value.isEmpty) {
+                      return 'Please Enter Valid $customErrorText';
+                    } else {
+                      return null;
+                    }
                   }
                 }
-              }
-              return null;
-            },
-      ),
+                return null;
+              }),
     );
   }
 }

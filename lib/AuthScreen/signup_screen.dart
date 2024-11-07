@@ -27,26 +27,34 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // FirebaseAuth.instance.signOut();
     return Form(
       key: formKey,
       child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus,
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
         child: Scaffold(
             body: Center(
           child: SingleChildScrollView(
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 stops: [
-                  .5,
-                  1.0,
+                  .001,
+                  .25,
+                  .75,
+                  1,
                 ],
-                colors: [Colors.blueGrey, Colors.grey],
+                colors: [
+                  Colors.orange.shade400,
+                  Colors.orange.shade200,
+                  Colors.orange.shade200,
+                  Colors.orange.shade400
+                ],
               )),
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -65,7 +73,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 30,
                   ),
 
-                  /// Title /// Enter your Details
+                  /// Enter your Details
                   const TextWidget(
                     text: 'Enter Details below',
                     fontSize: 18,
@@ -74,7 +82,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 20,
                   ),
 
-                  /// TextField for First Name
+                  /// TextField for Name
                   TextFieldWidget(
                     customErrorText: 'Name',
                     inputType: TextInputType.text,
@@ -133,7 +141,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 20,
                   ),
 
-                  /// Don't Have Account Text
+                  /// Already Have an Account Text
                   RichText(
                     text: TextSpan(
                         children: [
@@ -180,13 +188,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                         );
                         var userId = FirebaseAuth.instance.currentUser?.uid;
-                        print(FirebaseAuth.instance.currentUser?.email);
-                        print(userId);
                         if (newUser != null) {
                           await FirebaseAuth.instance.currentUser
                               ?.updateDisplayName(nameController.text);
                           await FirebaseAuth.instance.currentUser?.reload();
-                          print("aaaaaaa======$newUser");
                         }
                         if (newUser != null) {
                           Navigator.pushAndRemoveUntil(
@@ -199,7 +204,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         }
                         CollectionReference collRef =
                             FirebaseFirestore.instance.collection('users');
-                        collRef.add({
+                        collRef.doc(userId).set({
                           'name': nameController.text,
                           'email': emailId.text,
                           'PhoneNumber': phoneNo.text,
@@ -211,7 +216,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
-                          color: CupertinoColors.activeGreen,
+                          color: Colors.deepOrange.shade600.withOpacity(.8),
                           borderRadius: BorderRadius.circular(8)),
                       alignment: Alignment.center,
                       child:

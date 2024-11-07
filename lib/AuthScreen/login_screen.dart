@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:alabtech/AuthScreen/signup_screen.dart';
 import 'package:alabtech/home_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,21 +35,28 @@ class _LoginScreenState extends State<LoginScreen> {
       key: formKey,
       child: Scaffold(
           body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus,
+        onTap: () => FocusScope.of(context).unfocus(),
         child: Center(
           child: SingleChildScrollView(
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: [
-                  .5,
-                  1.0,
+                stops: const [
+                  .001,
+                  .25,
+                  .75,
+                  1,
                 ],
-                colors: [Colors.blueGrey, Colors.grey],
+                colors: [
+                  Colors.orange.shade400,
+                  Colors.orange.shade200,
+                  Colors.orange.shade200,
+                  Colors.orange.shade400
+                ],
               )),
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -224,10 +232,32 @@ class _LoginScreenState extends State<LoginScreen> {
                   /// Continue Google Button
                   GestureDetector(
                       onTap: () {
-                        authClass.handleGoogleSignIn(context);
+                        authClass
+                            .handleGoogleSignIn(context)
+                            .then((onValue) async {
+                          CollectionReference collRef =
+                              FirebaseFirestore.instance.collection('users');
+                          var userId = FirebaseAuth.instance.currentUser!.uid;
+                          var currentEmail = await collRef
+                              .where('email',
+                                  isEqualTo:
+                                      FirebaseAuth.instance.currentUser!.email)
+                              .get();
+                          if (currentEmail.docs.isEmpty) {
+                            collRef.doc(userId).set({
+                              'name': FirebaseAuth
+                                  .instance.currentUser!.displayName,
+                              'email': FirebaseAuth.instance.currentUser!.email,
+                              'PhoneNumber': FirebaseAuth
+                                      .instance.currentUser!.phoneNumber ??
+                                  "",
+                              "uid": userId,
+                            });
+                          }
+                        });
                       },
                       child: Container(
-                        constraints: BoxConstraints(maxWidth: 220),
+                        constraints: const BoxConstraints(maxWidth: 220),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
